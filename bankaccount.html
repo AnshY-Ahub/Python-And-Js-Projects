@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Account Manager</title>
+</head>
+<body>
+    <h1>Bank Account Manager</h1>
+    <p>Welcome to the Bank Account Manager!</p>
+
+    <h3>Choose an option:</h3>
+
+    <button onclick="chooseoption(1)">Create Account</button>
+    <button onclick="chooseoption(2)">Deposit Money</button>
+    <button onclick="chooseoption(3)">Withdraw Money</button>
+    <button onclick="chooseoption(4)">Change Pin</button>
+    <button onclick="chooseoption(5)">Exit</button>
+    <div id="formArea"></div>
+
+</body>
+</html>
+<script>
+let accountDetails = null;
+
+function chooseoption(option){
+let formArea = document.getElementById("formArea");
+
+if(option === 1){
+    formArea.innerHTML = `
+        <h3>Create Account</h3>
+        <form id="createAccountForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br><br>
+            <label for="accountNumber">Account Number:</label>
+            <input type="text" id="accountNumber" name="accountNumber" required><br><br>
+            <label for="pin">PIN:</label>
+            <input type="password" id="pin" name="pin" required><br><br>
+            <button type="submit">Create Account</button>
+        </form>
+    `;
+    document.getElementById("createAccountForm").addEventListener("submit", createAccount);
+} else if (option === 2){
+    formArea.innerHTML = `
+        <h3>Deposit Money</h3>
+        <form id="depositForm">
+            <label for="depositAccountNumber">Account Number:</label>
+            <input type="text" id="depositAccountNumber" name="depositAccountNumber" required><br><br>
+            <label for="depositAmount">Amount:</label>
+            <input type="number" id="depositAmount" name="depositAmount" required><br><br>
+            <label for="depositPin">PIN:</label>
+            <input type="password" id="depositPin" name="depositPin" required><br><br>
+            <button type="submit">Deposit</button>
+        </form>
+    `;
+    document.getElementById("depositForm").addEventListener("submit", depositMoney);
+} else if (option === 3){
+    formArea.innerHTML = `
+        <h3>Withdraw Money</h3>
+        <form id="withdrawForm">
+            <label for="withdrawAccountNumber">Account Number:</label>
+            <input type="text" id="withdrawAccountNumber" name="withdrawAccountNumber" required><br><br>
+            <label for="withdrawAmount">Amount:</label>
+            <input type="number" id="withdrawAmount" name="withdrawAmount" required><br><br>
+            <label for="withdrawPin">PIN:</label>
+            <input type="password" id="withdrawPin" name="withdrawPin" required><br><br>
+            <button type="submit">Withdraw</button>
+        </form>
+    `;
+    document.getElementById("withdrawForm").addEventListener("submit", withdrawMoney);
+} else if (option === 4){
+    formArea.innerHTML = `
+        <h3>Change PIN</h3>
+        <form id="changePinForm">
+            <label for="changePinAccountNumber">Account Number:</label>
+            <input type="text" id="changePinAccountNumber" name="changePinAccountNumber" required><br><br>
+            <label for="newPin">New PIN:</label>
+            <input type="password" id="newPin" name="newPin" required><br><br>
+            <button type="submit">Change PIN</button>
+        </form>
+    `;
+    document.getElementById("changePinForm").addEventListener("submit", changePin);
+} else if (option === 5){
+    formArea.innerHTML = `<h3>Thank you for using the Bank Account Manager!</h3>`;
+}
+}
+
+function createAccount(event){
+    event.preventDefault();
+    let name = document.getElementById("name").value;
+    let accountNumber = document.getElementById("accountNumber").value;
+    let pin = document.getElementById("pin").value;
+
+    accountDetails = { accountNumber, pin, balance: 0 };
+    console.log(`Account created for ${name} with account number ${accountNumber} and PIN ${pin}`);
+    alert(`Account created successfully for ${name}! Current balance: $0.00`);
+}
+
+function depositMoney(event){
+    event.preventDefault();
+    let accountNumber = document.getElementById("depositAccountNumber").value;
+    let amount = Number(document.getElementById("depositAmount").value);
+    let pin = document.getElementById("depositPin").value;
+
+    if (!accountDetails) {
+        alert("Please create an account first.");
+        return;
+    }
+    if (accountNumber !== accountDetails.accountNumber || pin !== accountDetails.pin) {
+        alert("Account number or PIN is incorrect.");
+        return;
+    }
+    if (amount <= 0) {
+        alert("Please enter a valid deposit amount.");
+        return;
+    }
+
+    accountDetails.balance += amount;
+    console.log(`Depositing $${amount} into account ${accountNumber}`);
+    alert(`Successfully deposited $${amount}. Current balance: $${accountDetails.balance.toFixed(2)}`);
+}
+
+function withdrawMoney(event){
+    event.preventDefault();
+    let accountNumber = document.getElementById("withdrawAccountNumber").value;
+    let amount = Number(document.getElementById("withdrawAmount").value);
+    let pin = document.getElementById("withdrawPin").value;
+
+    if (!accountDetails) {
+        alert("Please create an account first.");
+        return;
+    }
+    if (accountNumber !== accountDetails.accountNumber || pin !== accountDetails.pin) {
+        alert("Account number or PIN is incorrect.");
+        return;
+    }
+    if (amount <= 0) {
+        alert("Please enter a valid withdrawal amount.");
+        return;
+    }
+    if (amount > accountDetails.balance) {
+        alert("Insufficient balance.");
+        return;
+    }
+
+    accountDetails.balance -= amount;
+    console.log(`Withdrawing $${amount} from account ${accountNumber}`);
+    alert(`Successfully withdrew $${amount}. Remaining balance: $${accountDetails.balance.toFixed(2)}`);
+}
+
+function changePin(event){
+    event.preventDefault();
+    let accountNumber = document.getElementById("changePinAccountNumber").value;
+    let newPin = document.getElementById("newPin").value;
+
+    // Here you would typically send this data to a server or store it in a database
+    console.log(`Changing PIN for account ${accountNumber}`);
+    alert(`Successfully changed PIN for account ${accountNumber}!`);
+}
+
+function exitApplication(){
+    alert("Thank you for using the Bank Account Manager!");
+    window.close(); // This may not work in all browsers due to security restrictions
+}
+</script>
